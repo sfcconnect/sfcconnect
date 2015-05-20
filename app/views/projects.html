@@ -1,0 +1,95 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-push-3">
+            <div class="row">
+                <div class="col-md-12" ng-class="{ 'col-lg-6': ($index !== 0) }" ng-repeat="project in projects">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div ng-class="{ 'col-lg-6': ($index === 0), 'col-lg-12': ($index !== 0) }">
+                                    <div class="thumbnail">
+                                        <img src="images/projects/{{ project.image }}" alt="...">
+                                    </div>
+                                </div>
+                                <div ng-class="{ 'col-lg-6': ($index === 0), 'col-lg-12': ($index !== 0) }">
+                                    <h4>{{ project.title }}</h4>
+                                    <p>
+                                        {{ project.description }}
+                                    </p>
+                                    <div class="text-right">
+                                        <div class="btn-group" role="group" aria-label="...">
+                                            <button type="button" class="btn btn-success">参加</button>
+                                            <button type="button" class="btn btn-success">支援</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-md-pull-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">TAGS</h4>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                            <input type="text" class="form-control" placeholder="">
+                        </div>
+                    </li>
+                    <li class="list-group-item" ng-repeat="tag in tags">{{ tag }}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">LOG IN</h4>
+                </div>
+                <div class="panel-body">
+                    <form>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                <input type="text" class="form-control" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                <input type="password" class="form-control" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="text-right">
+                                <button type="button" class="btn btn-success">ログイン</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-success">プロジェクトをつくる！</button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-success">クエストを追加！</button>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item"><b>今あるクエスト</b></li>
+                    <li class="list-group-item" ng-repeat="quest in quests">{{ quest }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
