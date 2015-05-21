@@ -22,11 +22,20 @@ angular.module('connectApp')
     //     $scope.showingChart = !($scope.showingChart);
     // };
 
+    function getRandomColor() {
+        var rgb = hsvtorgb(getRandomInt(0, 360), 128, 255);
+        var r = rgb.r.toString(16).length === 1 ? '0' + rgb.r.toString(16) : rgb.r.toString(16);
+        var g = rgb.g.toString(16).length === 1 ? '0' + rgb.g.toString(16) : rgb.g.toString(16);
+        var b = rgb.b.toString(16).length === 1 ? '0' + rgb.b.toString(16) : rgb.b.toString(16);
+        return '#' + r + g + b;
+    }
+
     $scope.users = [
         {
             data: [100, 100, 100],
             x: 500,
-            y: 250
+            y: 250,
+            colors: [getRandomColor(), getRandomColor(), getRandomColor()]
         }
     ];
 
@@ -36,33 +45,38 @@ angular.module('connectApp')
 
     $scope.getRandomInt = getRandomInt;
 
-    for (var i = 0; i < 20; i++) {
-        var data = [];
-        var count = getRandomInt(2, 6);
-        for (var j = 0; j < count; j++) {
-            data.push(100);
+    $scope.init = function () {
+        for (var i = 0; i < 20; i++) {
+            var data = [], colors = [];
+            var count = getRandomInt(2, 6);
+            for (var j = 0; j < count; j++) {
+                data.push(100);
+                colors.push(getRandomColor());
+            }
+            $scope.users.push({
+                data: data,
+                x: getRandomInt(0, 900) + 50,
+                y: getRandomInt(0, 400) + 50,
+                colors: colors
+            });
         }
-        $scope.users.push({
-            data: data,
-            x: getRandomInt(0, 900) + 50,
-            y: getRandomInt(0, 400) + 50
-        });
-    }
+    };
 
-    $scope.getPiePath = function (data, cX, cY, R) {
+    $scope.getPiePath = function (data, cX, cY, R, selected) {
+        selected = isNaN(selected) ? 0 : selected;
+        // selected = 1;
+        // R = R + R * selected;
         var total = data.reduce(function (a, b) { return a + b; }, 0);
         var angles = data.map(function (a) { return a / total * 360.0; });
         var startAngles = angles.map(function (a, i) { return angles.slice(0, i).reduce(function (a, b) { return a + b; }, 0); });
         return startAngles.map(
             function (startAngle, i) {
                 var endAngle = startAngle + angles[i];
-
-                var x1 = parseInt(cX + R * Math.cos(Math.PI * startAngle / 180));
-                var y1 = parseInt(cY + R * Math.sin(Math.PI * startAngle / 180));
-
-                var x2 = parseInt(cX + R * Math.cos(Math.PI * endAngle / 180));
-                var y2 = parseInt(cY + R * Math.sin(Math.PI * endAngle / 180));
-
+                // var halfAngle = (startAngle + endAngle) / 2;
+                var x1 = parseInt(cX + R * Math.cos(Math.PI * startAngle / 180) * (1 + selected));
+                var y1 = parseInt(cY + R * Math.sin(Math.PI * startAngle / 180) * (1 + selected));
+                var x2 = parseInt(cX + R * Math.cos(Math.PI * endAngle / 180) * (1 + selected));
+                var y2 = parseInt(cY + R * Math.sin(Math.PI * endAngle / 180) * (1 + selected));
                 return 'M'+ cX + ',' + cY + ' L' + x1 + ',' + y1 + ' A' + R + ',' + R + ' 0 0,1 ' + x2 + ',' + y2 + ' z';
             }
         );
@@ -106,11 +120,4 @@ angular.module('connectApp')
         return {'r': Math.round(r), 'g': Math.round(g), 'b': Math.round(b)};
     }
 
-    $scope.getRandomColor = function () {
-        var rgb = hsvtorgb(getRandomInt(0, 360), 128, 255);
-        var r = rgb.r.toString(16).length === 1 ? '0' + rgb.r.toString(16) : rgb.r.toString(16);
-        var g = rgb.g.toString(16).length === 1 ? '0' + rgb.g.toString(16) : rgb.g.toString(16);
-        var b = rgb.b.toString(16).length === 1 ? '0' + rgb.b.toString(16) : rgb.b.toString(16);
-        return '#' + r + g + b;
-    };
 });

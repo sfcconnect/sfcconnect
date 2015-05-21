@@ -6,15 +6,23 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/boots
 @import "../app/styles/_variables.scss";
 @import "../app/styles/_bootswatch.scss";
 
+html, body {
+    height: 100%;
+}
+
 h1 {
     font-family: 'Roboto Condensed', sans-serif;
     font-weight: 300;
 }
 
-// #select {
-//     width: 100px;
-// }
+#view {
+    height: 100%;
+}
 
 .button-icon {
     font-size: 1.5em;
+}
+
+#map-container, #visualization {
+    height: 100%;
 }
