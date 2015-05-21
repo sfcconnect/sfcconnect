@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('connectApp')
-.controller('MapCtrl', function ($scope) {
+.controller('MapCtrl', function ($scope, $interval) {
 
     $scope.categories = [
         'カテゴリーを選択',
@@ -32,15 +32,16 @@ angular.module('connectApp')
     $scope.users = [
         {
             id: getRandomInt(0, 255),
+            name: 'S1 UEPON',
             data: [100, 100, 100],
             x: 500,
             y: 250,
-            colors: [getRandomColor(), getRandomColor(), getRandomColor()]
+            colors: [getRandomColor(), getRandomColor(), getRandomColor()],
+            factor: 0
         }
     ];
 
     $scope.getRandomInt = getRandomInt;
-
 
     for (var i = 0; i < 20; i++) {
         var data = [], colors = [];
@@ -54,14 +55,12 @@ angular.module('connectApp')
             data: data,
             x: getRandomInt(0, 900) + 50,
             y: getRandomInt(0, 400) + 50,
-            colors: colors
+            colors: colors,
+            factor: 0
         });
     }
 
-    $scope.getPiePath = function (data, cX, cY, R, selected) {
-        selected = isNaN(selected) ? 0 : selected;
-        // selected = 1;
-        // R = R + R * selected;
+    $scope.getPiePath = function (data, cX, cY, R, factor) {
         var total = data.reduce(function (a, b) { return a + b; }, 0);
         var angles = data.map(function (a) { return a / total * 360.0; });
         var startAngles = angles.map(function (a, i) { return angles.slice(0, i).reduce(function (a, b) { return a + b; }, 0); });
@@ -69,13 +68,48 @@ angular.module('connectApp')
             function (startAngle, i) {
                 var endAngle = startAngle + angles[i];
                 var halfAngle = (startAngle + endAngle) / 2;
-                var x1 = parseInt(cX + R * Math.cos(Math.PI * startAngle / 180) + selected * R * Math.cos(Math.PI * halfAngle / 180));
-                var y1 = parseInt(cY + R * Math.sin(Math.PI * startAngle / 180) + selected * R * Math.sin(Math.PI * halfAngle / 180));
-                var x2 = parseInt(cX + R * Math.cos(Math.PI * endAngle / 180) + selected * R * Math.cos(Math.PI * halfAngle / 180));
-                var y2 = parseInt(cY + R * Math.sin(Math.PI * endAngle / 180) + selected * R * Math.sin(Math.PI * halfAngle / 180));
+                var x1 = parseInt(cX + R * Math.cos(Math.PI * startAngle / 180) + factor * R/2 * Math.cos(Math.PI * halfAngle / 180));
+                var y1 = parseInt(cY + R * Math.sin(Math.PI * startAngle / 180) + factor * R/2 * Math.sin(Math.PI * halfAngle / 180));
+                var x2 = parseInt(cX + R * Math.cos(Math.PI * endAngle / 180) + factor * R/2 * Math.cos(Math.PI * halfAngle / 180));
+                var y2 = parseInt(cY + R * Math.sin(Math.PI * endAngle / 180) + factor * R/2 * Math.sin(Math.PI * halfAngle / 180));
                 return 'M'+ cX + ',' + cY + ' L' + x1 + ',' + y1 + ' A' + R + ',' + R + ' 0 0,1 ' + x2 + ',' + y2 + ' z';
             }
         );
+    };
+
+    $scope.getSelectedPiePath = function (data, cX, cY, R) {
+        var total = data.reduce(function (a, b) { return a + b; }, 0);
+        var angles = data.map(function (a) { return a / total * 360.0; });
+        var startAngles = angles.map(function (a, i) { return angles.slice(0, i).reduce(function (a, b) { return a + b; }, 0); });
+        return startAngles.map(
+            function (startAngle, i) {
+                var endAngle = startAngle + angles[i];
+                var halfAngle = (startAngle + endAngle) / 2;
+                var x1 = parseInt(cX + R * Math.cos(Math.PI * startAngle / 180) + R/2 * Math.cos(Math.PI * halfAngle / 180));
+                var y1 = parseInt(cY + R * Math.sin(Math.PI * startAngle / 180) + R/2 * Math.sin(Math.PI * halfAngle / 180));
+                var x2 = parseInt(cX + R * Math.cos(Math.PI * endAngle / 180) + R/2 * Math.cos(Math.PI * halfAngle / 180));
+                var y2 = parseInt(cY + R * Math.sin(Math.PI * endAngle / 180) + R/2 * Math.sin(Math.PI * halfAngle / 180));
+                return 'M'+ cX + ',' + cY + ' L' + x1 + ',' + y1 + ' A' + R + ',' + R + ' 0 0,1 ' + x2 + ',' + y2 + ' z';
+            }
+        );
+    };
+
+    $scope.animating = -1;
+    $scope.animate = function (user, flag) {
+        if ($scope.animating !== flag) {
+            $scope.animating = flag;
+            var time = 10.0;
+            user.factor = flag ? 0.0 : 1.0;
+            var timer = $interval(function () {
+                if (flag ? (user.factor >= 1.0) : (user.factor <= 0.0)) {
+                    user.factor = flag ? 1.0 : 0.0;
+                    $interval.cancel(timer);
+                    $scope.animating = -1;
+                } else {
+                    user.factor += (flag ? 1.0 : -1.0) / time;
+                }
+            }, 1);
+        }
     };
 
     function hsvtorgb (h, s, v) {

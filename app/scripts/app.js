@@ -25,6 +25,10 @@ angular
         templateUrl: 'views/projects.html',
         controller: 'ProjectsCtrl'
       })
+      .when('/group', {
+        templateUrl: 'views/group.html',
+        controller: 'GroupCtrl'
+      })
       .otherwise({
         redirectTo: '/map'
       });
