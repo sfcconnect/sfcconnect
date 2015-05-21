@@ -17,7 +17,7 @@ angular
   ])
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
+      .when('/map', {
         templateUrl: 'views/map.html',
         controller: 'MapCtrl'
       })
@@ -26,6 +26,6 @@ angular
         controller: 'ProjectsCtrl'
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/map'
       });
   });
