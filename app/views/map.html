@@ -40,13 +40,13 @@
         </div>
     </nav>
 
-    <svg ng-init="init()" version="1.1" id="map-layer" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 1000 500" enable-background="new 0 0 500 500" xml:space="preserve">
-        <g ng-repeat="user in users" ng-if="getRandomInt(0, 1) === 1">
-            <line ng-if="$index < users.length - 1" ng-attr-x1="{{ user.x }}" ng-attr-y1="{{ user.y }}" ng-attr-x2="{{ users[$index+1].x }}" ng-attr-y2="{{ users[$index+1].y }}" stroke="black"/>
-        </g>
-        <g ng-repeat="user in users">
-            <path ng-repeat="path in getPiePath(user.data, user.x, user.y, 20, user.selected)" ng-click="user.selected = !(user.selected);" ng-attr-d="{{ path }}" ng-attr-fill="{{ user.colors[$index] }}" stroke-width="2" stroke-linejoin="round" />
-            <circle ng-attr-cx="{{ user.x }}" ng-attr-cy="{{ user.y }}" ng-attr-r="{{ 10 }}" fill="white" />
+    <svg version="1.1" id="map-layer" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 1000 500" enable-background="new 0 0 500 500" xml:space="preserve">
+        <line ng-repeat="user in users" ng-if="$index < users.length - 1 && user.id % 5 !== 0" ng-attr-x1="{{ user.x }}" ng-attr-y1="{{ user.y }}" ng-attr-x2="{{ users[$index+1].x }}" ng-attr-y2="{{ users[$index+1].y }}" stroke="black"/>
+        <g ng-repeat="user in users" ng-click="user.selected = !(user.selected);">
+            <path ng-repeat="path in getPiePath(user.data, user.x, user.y, 20, user.selected)" ng-attr-d="{{ path }}" ng-attr-fill="{{ user.colors[$index] }}" stroke-width="2" stroke-linejoin="round">
+                <animate attributeName="d" repeatCount="0" dur="2s" ng-attr-d="{{ path }}">
+            </path>
+            <circle ng-attr-cx="{{ user.x }}" ng-attr-cy="{{ user.y }}" ng-attr-r="{{ 10 * (1 + (user.selected === true ? 1 : 0) * 2) }}" fill="white" />
         </g>
     </svg>
 
